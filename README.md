@@ -1,4 +1,4 @@
-# Appengine Helloworld sample for Google App Engine
+# Appengine botchaapis for Google App Engine
 This sample demonstrates how to deploy an application on Google App Engine
 ## Setup
 1. Update the <application> tag in src/main/webapp/WEB-INF/appengine-web.xml with your project name
