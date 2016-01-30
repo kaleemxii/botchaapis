@@ -21,7 +21,6 @@ import com.botcha.dataschema.User;
 import com.botcha.utilities.DataBase;
 import com.botcha.utilities.Utilities;
 import com.google.common.base.Strings;
-import com.google.gson.Gson;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +34,13 @@ public class GetChannelsServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json");
+
+        String allParam = req.getParameter("all");
+        if (!Strings.isNullOrEmpty(allParam) && allParam.equals("true")) {
+            PrintWriter out = resp.getWriter();
+            out.write(Utilities.Gson.toJson(DataBase.staticChannels));
+            return;
+        }
 
         String userIdParam = req.getParameter("userId");
         String userTagParam = req.getParameter("userTag");
@@ -56,10 +62,7 @@ public class GetChannelsServlet extends HttpServlet {
 
         List<Channel> channels = Utilities.getChannels(latitude, longitude);
 
-        Gson gson = new Gson();
-        gson.toJson(channels);
         PrintWriter out = resp.getWriter();
-        out.println(gson.toJson(channels));
-
+        out.write(Utilities.Gson.toJson(channels));
     }
 }

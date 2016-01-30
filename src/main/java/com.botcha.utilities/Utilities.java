@@ -1,6 +1,7 @@
 package com.botcha.utilities;
 
 import com.botcha.dataschema.Channel;
+import com.google.gson.Gson;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -19,6 +20,8 @@ import java.util.List;
  * Created by shverm on 1/29/2016.
  */
 public class Utilities {
+
+    public static Gson Gson = new Gson();
 
     public static String sendGet(String url) throws Exception {
 

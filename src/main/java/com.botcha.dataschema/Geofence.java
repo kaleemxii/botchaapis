@@ -10,11 +10,12 @@ public class Geofence {
     private static List<GeoCoordinates> coordinates;
 
     public Geofence(GeoCoordinates leftBottom, GeoCoordinates rightBottom, GeoCoordinates leftTop, GeoCoordinates rightTop) {
-        coordinates = new ArrayList<GeoCoordinates>();
+        coordinates = new ArrayList<>();
+
+        addCoordinate(rightTop);
+        addCoordinate(leftTop);
         addCoordinate(leftBottom);
         addCoordinate(rightBottom);
-        addCoordinate(leftTop);
-        addCoordinate(rightTop);
         precalc_values();
     }
 
