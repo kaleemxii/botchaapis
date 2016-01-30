@@ -41,8 +41,8 @@ public class RegisterChannelServlet extends HttpServlet {
             return;
         }
 
-        User user = DataBase.getUserByUserId(userIdParam);
-
+        int userId = Integer.parseInt(userIdParam);
+        User user = DataBase.getUserByUserId(userId);
         if (user == null) {
             resp.sendError(400, "BAD REQUEST userId not registered");
             return;

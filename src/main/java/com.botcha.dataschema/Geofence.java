@@ -5,9 +5,8 @@ import java.util.List;
 
 public class Geofence {
 
-    private static double[] constant, multiple;
-
-    private static List<GeoCoordinates> coordinates;
+    public List<GeoCoordinates> coordinates;
+    private double[] constant, multiple;
 
     public Geofence(GeoCoordinates leftBottom, GeoCoordinates rightBottom, GeoCoordinates leftTop, GeoCoordinates rightTop) {
         coordinates = new ArrayList<>();
@@ -19,7 +18,12 @@ public class Geofence {
         precalc_values();
     }
 
-    private static void precalc_values() {
+    public Geofence(List<GeoCoordinates> coordinates) {
+        this.coordinates = coordinates;
+        precalc_values();
+    }
+
+    private void precalc_values() {
 
         constant = new double[coordinates.size()];
         multiple = new double[coordinates.size()];
@@ -41,7 +45,7 @@ public class Geofence {
         }
     }
 
-    private static boolean pointInPolygon(double x, double y) {
+    private boolean pointInPolygon(double x, double y) {
 
         int i, j = coordinates.size() - 1;
         boolean oddNodes = false;

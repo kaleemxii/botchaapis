@@ -29,6 +29,16 @@
         <url-pattern>/registerchannel</url-pattern>
     </servlet-mapping>
 
+
+    <servlet>
+        <servlet-name>createchannel</servlet-name>
+        <servlet-class>com.botcha.apis.CreateChannelServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>createchannel</servlet-name>
+        <url-pattern>/createchannel</url-pattern>
+    </servlet-mapping>
+
     <servlet>
         <servlet-name>sendmessage</servlet-name>
         <servlet-class>com.botcha.apis.SendMessageServlet</servlet-class>

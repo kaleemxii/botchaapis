@@ -26,8 +26,13 @@ public class HelloServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String a = req.getQueryString();
         PrintWriter out = resp.getWriter();
-        out.println("Hello, world");
+        out.write("Hello, world \n\n" +
+                "Available APIs: \n\n" +
+                "/getchannels?userId=xxx&lat=22.33&long=34.54 [&userTag=abc if new user] [&all=true for all channels] \n\n" +
+                "/createchannel?channelId=abc&adminId=1&adminTag=botcha&lat0=0&long0=0&lat1=0&long1=1&lat2=1&long2=1&lat3=1&long3=1 [&adminTag=dsada if new user] \n\n" +
+                "/registerchannel?channelId=xxxx&userId=xxxx \n\n" +
+                "/sendmessage?channelId=xxxx&userId=xxxx&message=dasdsada \n\n" +
+                "/broadcastmessage?channelId=xxxx&message=dasdsada \n\n ");
     }
 }

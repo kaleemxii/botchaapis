@@ -43,7 +43,6 @@ public class GetChannelsServlet extends HttpServlet {
         }
 
         String userIdParam = req.getParameter("userId");
-        String userTagParam = req.getParameter("userTag");
         String latParam = req.getParameter("lat");
         String longParam = req.getParameter("long");
 
@@ -54,18 +53,31 @@ public class GetChannelsServlet extends HttpServlet {
             return;
         }
 
+        // check the user if available
+        int userId = Integer.parseInt(userIdParam);
+        User user = DataBase.getUserByUserId(userId);
+        if (user == null) {
+            String userTagParam = req.getParameter("userTag");
+            if (Strings.isNullOrEmpty(userTagParam)) {
+                resp.sendError(400, "BAD REQUEST user doesn't exists pass userTag param");
+                return;
+            }
+            user = new User(userId, userTagParam);
+            //add users to our list
+            DataBase.addUser(user);
+        }
+
+
+
         double latitude = Double.parseDouble(latParam);
         double longitude = Double.parseDouble(longParam);
 
         List<Channel> channels = Utilities.getChannels(latitude, longitude);
-
         PrintWriter out = resp.getWriter();
         out.write(Utilities.Gson.toJson(channels));
 
-        // add the user to our list
-        DataBase.addUser(new User(userIdParam, userTagParam));
-
-        // remove the user from channel if present
+        // remove the user from other channels if present
         Utilities.removeUserFromChannelsExcept(userIdParam, channels);
     }
+
 }

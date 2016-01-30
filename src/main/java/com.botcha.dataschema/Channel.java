@@ -9,7 +9,7 @@ public class Channel {
     public Geofence geofence;
     public User admin;
     public String channelID;
-    public HashMap<String, User> users;
+    public HashMap<Integer, User> users;
 
     public Channel(Geofence geofence, User admin, String channelID) {
         this.geofence = geofence;

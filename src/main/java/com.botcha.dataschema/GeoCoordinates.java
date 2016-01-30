@@ -1,8 +1,5 @@
 package com.botcha.dataschema;
 
-/**
- * Created by shverm on 1/29/2016.
- */
 public class GeoCoordinates {
     public double latitude;
     public double longitude;

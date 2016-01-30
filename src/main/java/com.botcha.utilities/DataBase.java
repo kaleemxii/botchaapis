@@ -12,7 +12,7 @@ import java.util.HashMap;
  */
 public class DataBase {
     public static HashMap<String, Channel> staticChannels;
-    public static HashMap<String, User> staticUsers;
+    public static HashMap<Integer, User> staticUsers;
 
     static {
         buildDummyData();
@@ -30,7 +30,7 @@ public class DataBase {
         return staticChannels.get(id);
     }
 
-    public static User getUserByUserId(String id) {
+    public static User getUserByUserId(int id) {
         return staticUsers.get(id);
     }
 
@@ -53,8 +53,8 @@ public class DataBase {
         Geofence microsoftGeofence = new Geofence(microsoftLeftBottom, microsoftLeftTop, microsoftRightTop, microsoftRightBottom);
         Geofence mprGeofence = new Geofence(mprLeftBottom, mprLeftTop, mprRightTop, mprRightBottom);
 
-        User microsoftAdmin = new User("1", "admin");
-        User mprAdmin = new User("2", "admin");
+        User microsoftAdmin = new User(1, "admin");
+        User mprAdmin = new User(2, "admin");
 
 
         Channel microsoftChannel = new Channel(microsoftGeofence, microsoftAdmin, "1");

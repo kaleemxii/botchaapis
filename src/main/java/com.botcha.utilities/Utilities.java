@@ -72,19 +72,19 @@ public class Utilities {
         return sendGet(uri.toString());
     }
 
-    public static void sendMessageToAllUser(List<String> userIds, String channelId, String message) throws Exception {
-        for (String userId : userIds) {
+    public static void sendMessageToAllUser(List<Integer> userIds, String channelId, String message) throws Exception {
+        for (int userId : userIds) {
             sendMessageToUser(userId, channelId, message);
         }
     }
 
     public static void sendMessageToAllUserInChannel(Channel channel, String message) throws Exception {
-        for (String userId : channel.users.keySet()) {
+        for (int userId : channel.users.keySet()) {
             sendMessageToUser(userId, channel.channelID, message);
         }
     }
 
-    public static void sendMessageToUser(String userId, String channelId, String message) throws Exception {
+    public static void sendMessageToUser(int userId, String channelId, String message) throws Exception {
         //https://api.telegram.org/bot125820728:AAGMxfd0FMD48rVZIhz4CuGCwShtr-afZ4U/sendmessage?chat_id=113462548&text=fku
         String url = new StringBuffer("https://api.telegram.org/bot")
                 .append(channelId)

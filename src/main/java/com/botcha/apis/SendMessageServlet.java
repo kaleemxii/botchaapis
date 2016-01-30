@@ -43,8 +43,8 @@ public class SendMessageServlet extends HttpServlet {
             resp.sendError(400, "BAD REQUEST userIdParam/channelId/message is missing");
             return;
         }
-
-        User user = DataBase.getUserByUserId(userIdParam);
+        int userId = Integer.parseInt(userIdParam);
+        User user = DataBase.getUserByUserId(userId);
 
         if (user == null) {
             resp.sendError(400, "BAD REQUEST userId not registered");
@@ -59,7 +59,7 @@ public class SendMessageServlet extends HttpServlet {
         }
 
         try {
-            Utilities.sendMessageToUser(userIdParam, channelIdParam, messageParam);
+            Utilities.sendMessageToUser(userId, channelIdParam, messageParam);
         } catch (Exception e) {
             throw new IOException(e);
         }
