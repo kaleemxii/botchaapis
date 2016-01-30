@@ -21,4 +21,8 @@ public class Channel {
     public void addUser(User user) {
         users.put(user.userId, user);
     }
+
+    public void removeUser(String userId) {
+        users.remove(userId);
+    }
 }

@@ -57,12 +57,15 @@ public class GetChannelsServlet extends HttpServlet {
         double latitude = Double.parseDouble(latParam);
         double longitude = Double.parseDouble(longParam);
 
-        // add the user to our list
-        DataBase.addUser(new User(userIdParam, userTagParam));
-
         List<Channel> channels = Utilities.getChannels(latitude, longitude);
 
         PrintWriter out = resp.getWriter();
         out.write(Utilities.Gson.toJson(channels));
+
+        // add the user to our list
+        DataBase.addUser(new User(userIdParam, userTagParam));
+
+        // remove the user from channel if present
+        Utilities.removeUserFromChannelsExcept(userIdParam, channels);
     }
 }

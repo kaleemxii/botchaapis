@@ -14,7 +14,9 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by shverm on 1/29/2016.
@@ -22,6 +24,20 @@ import java.util.List;
 public class Utilities {
 
     public static Gson Gson = new Gson();
+
+    public static void removeUserFromChannelsExcept(String userId, List<Channel> channels) {
+        Set<String> channelIds = new HashSet<>(channels.size());
+        for (Channel channel : channels) {
+            channelIds.add(channel.channelID);
+        }
+
+        for (Channel channel : DataBase.staticChannels.values()) {
+
+            if (!channelIds.contains(channel.channelID)) {
+                channel.removeUser(userId);
+            }
+        }
+    }
 
     public static String sendGet(String url) throws Exception {
 
