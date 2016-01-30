@@ -1,5 +1,6 @@
 package com.botcha.dataschema;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 /**
@@ -9,20 +10,27 @@ public class Channel {
     public Geofence geofence;
     public User admin;
     public String channelID;
-    public HashMap<Integer, User> users;
+    public String channelTag;
 
-    public Channel(Geofence geofence, User admin, String channelID) {
+    private transient HashMap<Integer, User> usersById;
+
+    public Channel(Geofence geofence, User admin, String channelID, String channelTag) {
         this.geofence = geofence;
         this.admin = admin;
         this.channelID = channelID;
-        users = new HashMap<>();
+        this.channelTag = channelTag;
+        usersById = new HashMap<>();
+    }
+
+    public Collection<User> getUsers() {
+        return usersById.values();
     }
 
     public void addUser(User user) {
-        users.put(user.userId, user);
+        usersById.put(user.userId, user);
     }
 
     public void removeUser(String userId) {
-        users.remove(userId);
+        usersById.remove(userId);
     }
 }

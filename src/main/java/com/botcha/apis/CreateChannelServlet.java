@@ -21,16 +21,19 @@ public class CreateChannelServlet extends HttpServlet {
         resp.setContentType("application/json");
 
         String channelIdParam = req.getParameter("channelId");
+        String channelTagParam = req.getParameter("channelTag");
         String adminIdParam = req.getParameter("adminId");
 
 
         if (Strings.isNullOrEmpty(channelIdParam)
+                || Strings.isNullOrEmpty(channelTagParam)
                 || Strings.isNullOrEmpty(adminIdParam)
 
                 ) {
-            resp.sendError(400, "BAD REQUEST channelId/adminId/long is missing");
+            resp.sendError(400, "BAD REQUEST channelId/channelTag/adminId is missing");
             return;
         }
+
         int adminId = Integer.parseInt(adminIdParam);
 
         // get the coordinates
@@ -68,7 +71,7 @@ public class CreateChannelServlet extends HttpServlet {
             DataBase.addUser(admin);
         }
 
-        Channel channel = new Channel(geofence, admin, channelIdParam);
+        Channel channel = new Channel(geofence, admin, channelIdParam, channelTagParam);
 
         // add the user to our users list
         DataBase.addChannel(channel);

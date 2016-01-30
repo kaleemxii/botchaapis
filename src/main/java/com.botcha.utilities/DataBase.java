@@ -5,7 +5,10 @@ import com.botcha.dataschema.GeoCoordinates;
 import com.botcha.dataschema.Geofence;
 import com.botcha.dataschema.User;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by xy on 30/1/16.
@@ -34,6 +37,27 @@ public class DataBase {
         return staticUsers.get(id);
     }
 
+    public static User getUserByUserTag(String userTag, Collection<User> users) {
+        users = users == null ? DataBase.staticUsers.values() : users;
+        for (User user : users) {
+            if (user.userTag.equals(userTag)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    public static List<Channel> getGeoFenceChannels() {
+        Collection<Channel> values = DataBase.staticChannels.values();
+        List<Channel> channels = new ArrayList<>(values.size() - 1);
+        for (Channel channel : values) {
+            if (channel.geofence != null) {
+                channels.add(channel);
+            }
+        }
+        return channels;
+    }
+
 
     private static void buildDummyData() {
         GeoCoordinates microsoftLeftBottom = new GeoCoordinates(17.42726335237322, 78.34141373634338);
@@ -57,8 +81,8 @@ public class DataBase {
         User mprAdmin = new User(2, "admin");
 
 
-        Channel microsoftChannel = new Channel(microsoftGeofence, microsoftAdmin, "1");
-        Channel mprChannel = new Channel(mprGeofence, mprAdmin, "2");
+        Channel microsoftChannel = new Channel(microsoftGeofence, microsoftAdmin, "1", "microsoft");
+        Channel mprChannel = new Channel(mprGeofence, mprAdmin, "2", "mpr");
 
 
         addChannel(microsoftChannel);
@@ -69,4 +93,5 @@ public class DataBase {
         addUser(mprAdmin);
 
     }
+
 }

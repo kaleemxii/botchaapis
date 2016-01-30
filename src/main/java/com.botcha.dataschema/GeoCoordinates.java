@@ -8,4 +8,13 @@ public class GeoCoordinates {
         this.latitude = latitude;
         this.longitude = longitude;
     }
+
+    public GeoCoordinates() {
+
+    }
+
+    public void update(double latitude, double longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
 }

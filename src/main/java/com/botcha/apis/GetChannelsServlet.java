@@ -38,7 +38,7 @@ public class GetChannelsServlet extends HttpServlet {
         String allParam = req.getParameter("all");
         if (!Strings.isNullOrEmpty(allParam) && allParam.equals("true")) {
             PrintWriter out = resp.getWriter();
-            out.write(Utilities.Gson.toJson(DataBase.staticChannels));
+            out.write(Utilities.Gson.toJson(DataBase.staticChannels.values()));
             return;
         }
 
@@ -71,10 +71,12 @@ public class GetChannelsServlet extends HttpServlet {
 
         double latitude = Double.parseDouble(latParam);
         double longitude = Double.parseDouble(longParam);
-
         List<Channel> channels = Utilities.getChannels(latitude, longitude);
         PrintWriter out = resp.getWriter();
         out.write(Utilities.Gson.toJson(channels));
+
+        // update user co-ordinates
+        user.getCoordinates().update(latitude, longitude);
 
         // remove the user from other channels if present
         Utilities.removeUserFromChannelsExcept(userIdParam, channels);

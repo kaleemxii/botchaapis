@@ -40,7 +40,7 @@ public class SendMessageServlet extends HttpServlet {
         if (Strings.isNullOrEmpty(userIdParam)
                 || Strings.isNullOrEmpty(channelIdParam)
                 || Strings.isNullOrEmpty(messageParam)) {
-            resp.sendError(400, "BAD REQUEST userIdParam/channelId/message is missing");
+            resp.sendError(400, "BAD REQUEST userId/channelId/message is missing");
             return;
         }
         int userId = Integer.parseInt(userIdParam);
@@ -58,10 +58,35 @@ public class SendMessageServlet extends HttpServlet {
             return;
         }
 
-        try {
-            Utilities.sendMessageToUser(userId, channelIdParam, messageParam);
-        } catch (Exception e) {
-            throw new IOException(e);
+        // check is the sender is the admin of channel
+        if (channel.admin.userId == userId) {
+            messageParam = messageParam.trim();
+            if (messageParam.startsWith("@")) { // admin replying to @userTag user
+                String userTag = messageParam.substring(1, messageParam.indexOf(' '));
+                String message = messageParam.substring(userTag.length() + 2);
+                User toUser = DataBase.getUserByUserTag(userTag, channel.getUsers());
+                if (toUser != null) {
+                    Utilities.sendMessageToUser(toUser.userId, channelIdParam, message);
+                }
+            } else { // broadcast to all users
+                Utilities.sendMessageToAllUserInChannel(channel, messageParam);
+            }
+
+        } else { // if the send is not admin
+            if (channel.geofence == null) { // if this is master big bot channel
+                String answer = Utilities.getMessageAnswer(user, messageParam);
+                Utilities.sendMessageToUser(userId, channelIdParam, answer);
+
+            } else { // user is asking in normal channel
+
+                if (messageParam.startsWith("@admin")) { // user asking to @admin of channel
+                    String message = messageParam.substring("@admin".length());
+                    Utilities.sendMessageToUser(channel.admin.userId, channelIdParam, message);
+                } else { // user asking to channel bot, so bot replies
+                    String answer = Utilities.getMessageAnswerFromChannel(channel, messageParam);
+                    Utilities.sendMessageToUser(userId, channelIdParam, answer);
+                }
+            }
         }
     }
 }

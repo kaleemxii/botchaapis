@@ -49,11 +49,6 @@ public class BroadcastMessageServlet extends HttpServlet {
             return;
         }
 
-        try {
-            Utilities.sendMessageToAllUserInChannel(DataBase.getChannelByChannelId(channelIdParam), messageParam);
-        } catch (Exception e) {
-            throw new IOException(e);
-        }
-
+        Utilities.sendMessageToAllUserInChannel(DataBase.getChannelByChannelId(channelIdParam), messageParam);
     }
 }
