@@ -15,14 +15,20 @@ public class Channel {
     public String channelID;
     public String channelTag;
     public String summary;
+    private transient String chanelToken;
     private transient HashMap<Integer, User> usersById;
 
-    public Channel(Geofence geofence, User admin, String channelID, String channelTag) {
+    public Channel(Geofence geofence, User admin, String channelID, String channelToken, String channelTag) {
         this.geofence = geofence;
         this.admin = admin;
         this.channelID = channelID;
+        this.chanelToken = channelToken;
         this.channelTag = channelTag;
         usersById = new HashMap<>();
+    }
+
+    public String getChanneldToken() {
+        return channelID + ":" + chanelToken;
     }
 
     public User getUserById(int userId) {
@@ -48,6 +54,6 @@ public class Channel {
     }
 
     public Channel getClone() {
-        return new Channel(this.geofence, admin, channelID, channelTag);
+        return new Channel(this.geofence, admin, channelID, "", channelTag);
     }
 }

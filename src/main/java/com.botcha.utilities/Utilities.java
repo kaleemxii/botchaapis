@@ -60,24 +60,19 @@ public class Utilities {
     }
 
 
-    public static void sendMessageToAllUser(List<Integer> userIds, String channelId, String message) throws IOException {
-        for (int userId : userIds) {
-            sendMessageToUser(userId, channelId, message);
-        }
-    }
 
     public static void sendMessageToAllUserInChannel(Channel channel, String message) throws IOException {
         for (User user : channel.getUsers()) {
-            sendMessageToUser(user.userId, channel.channelID, message);
+            sendMessageToUser(user.userId, channel, message);
         }
     }
 
-    public static void sendMessageToUser(int userId, String channelId, String message) throws IOException {
+    public static void sendMessageToUser(int userId, Channel channel, String message) throws IOException {
         //https://api.telegram.org/bot125820728:AAGMxfd0FMD48rVZIhz4CuGCwShtr-afZ4U/sendmessage?chat_id=113462548&text=fku
         String url = null;
         try {
             url = new StringBuffer("https://api.telegram.org/bot")
-                    .append(channelId)
+                    .append(channel.getChanneldToken())
                     .append("/sendmessage?chat_id=")
                     .append(userId)
                     .append("&text=")
@@ -149,7 +144,7 @@ public class Utilities {
         List<Message> messages = new ArrayList<>();
 
         //https://api.telegram.org/bot125820728:AAGMxfd0FMD48rVZIhz4CuGCwShtr-afZ4U/getupdates
-        String updates = sendGet("https://api.telegram.org/bot" + channel.channelID + "/getupdates");
+        String updates = sendGet("https://api.telegram.org/bot" + channel.getChanneldToken() + "/getupdates");
         JsonElement jelement = new JsonParser().parse(updates);
         JsonObject jobject = jelement.getAsJsonObject();
         JsonPrimitive ok = jobject.getAsJsonPrimitive("ok");
@@ -201,7 +196,7 @@ public class Utilities {
                 String message = messageParam.substring(userTag.length() + 2);
                 User toUser = DataBase.getUserByUserTag(userTag, channel.getUsers());
                 if (toUser != null) {
-                    Utilities.sendMessageToUser(toUser.userId, channelIdParam, "@admin:" + message);
+                    Utilities.sendMessageToUser(toUser.userId, channel, "@admin:" + message);
                 }
             } else if (!messageParam.startsWith("/post")) { // admin is not posting to bot
                 Utilities.sendMessageToAllUserInChannel(channel, messageParam);
@@ -210,19 +205,19 @@ public class Utilities {
         } else { // if the send is not admin
             if (channel.geofence == null && channel.admin == null) { // if this is master big bot channel
                 String answer = Utilities.getMessageAnswer(user, messageParam);
-                Utilities.sendMessageToUser(userId, channelIdParam, answer);
+                Utilities.sendMessageToUser(userId, channel, answer);
 
             } else { // user is asking in normal channel
 
                 if (messageParam.startsWith("@admin")) { // user asking to @admin of channel
                     String message = messageParam.substring("@admin".length());
-                    Utilities.sendMessageToUser(channel.admin.userId, channelIdParam, "@" + user.userTag + ": " + message);
+                    Utilities.sendMessageToUser(channel.admin.userId, channel, "@" + user.userTag + ": " + message);
                 } else if (messageParam.startsWith("/broadcast")) { // user asking to @admin of channel
                     String message = messageParam.substring("/broadcast".length());
                     Utilities.sendMessageToAllUserInChannel(channel, message);
                 } else { // user asking to channel bot, so bot replies
                     String answer = Utilities.getMessageAnswerFromChannel(channel, messageParam);
-                    Utilities.sendMessageToUser(userId, channelIdParam, answer);
+                    Utilities.sendMessageToUser(userId, channel, answer);
                 }
             }
         }

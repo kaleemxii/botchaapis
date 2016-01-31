@@ -22,6 +22,7 @@ public class CreateChannelServlet extends HttpServlet {
 
         String channelIdParam = req.getParameter("channelId");
         String channelTagParam = req.getParameter("channelTag");
+        String channelTokenParam = req.getParameter("channelToken");
         String adminIdParam = req.getParameter("adminId");
 
 
@@ -70,8 +71,8 @@ public class CreateChannelServlet extends HttpServlet {
             admin = new User(adminId, adminTagParam);
             DataBase.addUser(admin);
         }
-        resp.getWriter().write("{'ok':true}");
-        Channel channel = new Channel(geofence, admin, channelIdParam, channelTagParam);
+        resp.getWriter().write("{\"ok\":true}");
+        Channel channel = new Channel(geofence, admin, channelIdParam, channelTokenParam, channelTagParam);
 
         // add the user to our users list
         DataBase.addChannel(channel);

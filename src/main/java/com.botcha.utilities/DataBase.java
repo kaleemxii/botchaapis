@@ -84,7 +84,7 @@ public class DataBase {
                         , new GeoCoordinates(17.42944, 78.34014)
                         , new GeoCoordinates(17.43397, 78.34344))
 
-                , microsoftAdmin, "135483832:AAFMWMgaqIJbe0BAWjZcVxnIDKBAfrpLp9E", "microsoft");
+                , microsoftAdmin, "135483832", "AAFMWMgaqIJbe0BAWjZcVxnIDKBAfrpLp9E", "microsoft");
 
         Channel building3Channel = new Channel(
                 new Geofence(
@@ -93,7 +93,7 @@ public class DataBase {
                         , new GeoCoordinates(17.42953, 78.34037)
                         , new GeoCoordinates(17.43002, 78.34090))
 
-                , building3Admin, "171135579:AAE4e1xWLomYb5wG3Bp69TVFue2I1fFeoVE", "building3");
+                , building3Admin, "171135579", "AAE4e1xWLomYb5wG3Bp69TVFue2I1fFeoVE", "building3");
 
         Channel mprChannel = new Channel(
                 new Geofence(
@@ -102,7 +102,7 @@ public class DataBase {
                         , new GeoCoordinates(17.42969, 78.34080)
                         , new GeoCoordinates(17.42977, 78.34086))
 
-                , mprAdmin, "149007104:AAHtzMtfQIEhDVE5795Ip8JmTa4NY59R0pU", "mpr");
+                , mprAdmin, "149007104", "AAHtzMtfQIEhDVE5795Ip8JmTa4NY59R0pU", "mpr");
 
 
         Channel hydTrafficChannel = new Channel(
@@ -112,9 +112,9 @@ public class DataBase {
                         , new GeoCoordinates(17.43337, 78.30122)
                         , new GeoCoordinates(17.55387, 78.44130))
 
-                , hydTrafficAdmin, "175641240:AAGayLEwIXjVDI1qWTb6lRUucFSGtZOMWDQ", "hydtraffic");
+                , hydTrafficAdmin, "175641240", "AAGayLEwIXjVDI1qWTb6lRUucFSGtZOMWDQ", "hydtraffic");
 
-        Channel botchaChannel = new Channel(null, null, "192493113:AAEd8UGh8sum7P02Np39m2cGhuFRyT7xkj4", "botcha");
+        Channel botchaChannel = new Channel(null, null, "192493113", "AAEd8UGh8sum7P02Np39m2cGhuFRyT7xkj4", "botcha");
 
         addChannel(microsoftChannel);
         addChannel(building3Channel);
