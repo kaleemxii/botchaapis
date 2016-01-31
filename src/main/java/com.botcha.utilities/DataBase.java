@@ -59,38 +59,71 @@ public class DataBase {
     }
 
 
+
     private static void buildDummyData() {
-        GeoCoordinates microsoftLeftBottom = new GeoCoordinates(17.42726335237322, 78.34141373634338);
-        GeoCoordinates microsoftLeftTop = new GeoCoordinates(17.429023997842013, 78.33863496780396);
-        GeoCoordinates microsoftRightTop = new GeoCoordinates(17.43590263591793, 78.34269046783447);
-        GeoCoordinates microsoftRightBottom = new GeoCoordinates(17.43414205681682, 78.34575891494751);
-
-        GeoCoordinates mprLeftTop = new GeoCoordinates(17.429554363369927, 78.34092993289232);
-        GeoCoordinates mprLeftBottom = new GeoCoordinates(17.42954476690242, 78.34095273166895);
-        GeoCoordinates mprRightTop = new GeoCoordinates(17.429711745365164, 78.34103118628263);
-        GeoCoordinates mprRightBottom = new GeoCoordinates(17.429697670558106, 78.34106404334307);
-
 
         staticUsers = new HashMap<>();
         staticChannels = new HashMap<>();
 
-        Geofence microsoftGeofence = new Geofence(microsoftLeftBottom, microsoftLeftTop, microsoftRightTop, microsoftRightBottom);
-        Geofence mprGeofence = new Geofence(mprLeftBottom, mprLeftTop, mprRightTop, mprRightBottom);
+        User microsoftAdmin = new User(113462548, "microsoftAdmin"); // kaleem
+        User building3Admin = new User(2, "building3Admin");
+        User mprAdmin = new User(3, "mprAdmin");
+        User hydTrafficAdmin = new User(4, "hydTrafficAdmin");
 
-        User microsoftAdmin = new User(1, "admin");
-        User mprAdmin = new User(2, "admin");
+        microsoftAdmin.setCoordinates(new GeoCoordinates(17.42968, 78.34089));
+
+        addUser(microsoftAdmin);
+        addUser(building3Admin);
+        addUser(hydTrafficAdmin);
+        addUser(mprAdmin);
+
+        Channel microsoftChannel = new Channel(
+                new Geofence(
+                        new GeoCoordinates(17.43374, 78.34529)
+                        , new GeoCoordinates(17.42842, 78.34196)
+                        , new GeoCoordinates(17.42944, 78.34014)
+                        , new GeoCoordinates(17.43397, 78.34344))
+
+                , microsoftAdmin, "135483832:AAFMWMgaqIJbe0BAWjZcVxnIDKBAfrpLp9E", "microsoft");
+
+        Channel building3Channel = new Channel(
+                new Geofence(
+                        new GeoCoordinates(17.42968, 78.34162)
+                        , new GeoCoordinates(17.42913, 78.341180)
+                        , new GeoCoordinates(17.42953, 78.34037)
+                        , new GeoCoordinates(17.43002, 78.34090))
+
+                , building3Admin, "171135579:AAE4e1xWLomYb5wG3Bp69TVFue2I1fFeoVE", "building3");
+
+        Channel mprChannel = new Channel(
+                new Geofence(
+                        new GeoCoordinates(17.42971, 78.34097)
+                        , new GeoCoordinates(17.42964, 78.34092)
+                        , new GeoCoordinates(17.42969, 78.34080)
+                        , new GeoCoordinates(17.42977, 78.34086))
+
+                , mprAdmin, "149007104:AAHtzMtfQIEhDVE5795Ip8JmTa4NY59R0pU", "mpr");
 
 
-        Channel microsoftChannel = new Channel(microsoftGeofence, microsoftAdmin, "1", "microsoft");
-        Channel mprChannel = new Channel(mprGeofence, mprAdmin, "2", "mpr");
+        Channel hydTrafficChannel = new Channel(
+                new Geofence(
+                        new GeoCoordinates(17.42224, 78.60335)
+                        , new GeoCoordinates(17.32459, 78.50310)
+                        , new GeoCoordinates(17.43337, 78.30122)
+                        , new GeoCoordinates(17.55387, 78.44130))
+
+                , hydTrafficAdmin, "175641240:AAGayLEwIXjVDI1qWTb6lRUucFSGtZOMWDQ", "hydtraffic");
+
+        Channel botchaChannel = new Channel(null, null, "192493113:AAEd8UGh8sum7P02Np39m2cGhuFRyT7xkj4", "botcha");
+
 
 
         addChannel(microsoftChannel);
+        addChannel(building3Channel);
         addChannel(mprChannel);
+        addChannel(hydTrafficChannel);
+        addChannel(botchaChannel);
 
-
-        addUser(microsoftAdmin);
-        addUser(mprAdmin);
 
     }
 

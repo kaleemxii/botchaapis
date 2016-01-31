@@ -15,7 +15,9 @@ import org.apache.http.impl.client.HttpClients;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -40,7 +42,7 @@ public class Utilities {
         }
     }
 
-    public static String sendGet(String url) throws IOException {
+    public static String sendGet2(String url) throws IOException {
 
         HttpGet httpGet = new HttpGet(url);
 
@@ -60,6 +62,28 @@ public class Utilities {
         reader.close();
         httpClient.close();
 
+        return response.toString();
+    }
+
+    public static String sendGet(String url) throws IOException {
+
+        URL obj = new URL(url);
+        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+        int responseCode = con.getResponseCode();
+
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+
+        //print result
+        //System.out.println(response.toString());
         return response.toString();
     }
 
@@ -118,11 +142,9 @@ public class Utilities {
         GeoCoordinates coordinates = user.getCoordinates();
         List<Channel> channels = getChannels(coordinates.latitude, coordinates.longitude);
         List<Message> messages = new ArrayList<>();
-
         for (Channel channel : channels) {
             messages.addAll(getChannelUpdates(channel.channelID));
         }
-
         Message answer = AnsweringUtility.getQuestionAnswerFromMessages(question, messages);
 
         if (answer != null) {
@@ -133,7 +155,6 @@ public class Utilities {
                     channelTag = channel.channelTag;
                 }
             }
-
             return "Found a relevant answer in channel #" + channelTag + " : " + answer.text;
         }
 
@@ -145,7 +166,7 @@ public class Utilities {
         Message answer = AnsweringUtility.getQuestionAnswerFromMessages(question, getChannelUpdates(channel.channelID));
 
 
-        return answer != null ? "Sorry couldn't find an answer for you.. try asking admin of channle directly by '@admin [your question]'" :
+        return answer != null ? "Sorry couldn't find an answer for you.. try asking admin of channel directly by '@admin [your question]'" :
                 "Found relevant answer in channel history : " + answer.text;
     }
 
@@ -155,19 +176,18 @@ public class Utilities {
 
         //https://api.telegram.org/bot125820728:AAGMxfd0FMD48rVZIhz4CuGCwShtr-afZ4U/getupdates
         String updates = sendGet("https://api.telegram.org/bot" + channelId + "/getupdates");
-
         JsonElement jelement = new JsonParser().parse(updates);
         JsonObject jobject = jelement.getAsJsonObject();
-        JsonObject ok = jobject.getAsJsonObject("ok");
-        if (ok.isJsonNull() || !ok.getAsString().equals("true")) {
+        JsonPrimitive ok = jobject.getAsJsonPrimitive("ok");
+        if (ok.isJsonNull() || !ok.getAsBoolean()) {
             return messages;
         }
 
         JsonArray results = jobject.getAsJsonArray("result");
         for (JsonElement result : results) {
             JsonObject message = result.getAsJsonObject().getAsJsonObject("message");
-            int fromUserId = message.getAsJsonObject("from").getAsJsonObject("id").getAsInt();
-            String text = message.getAsJsonObject("text").getAsString().toLowerCase();
+            int fromUserId = message.getAsJsonObject("from").getAsJsonPrimitive("id").getAsInt();
+            String text = message.getAsJsonPrimitive("text").getAsString().toLowerCase();
             messages.add(new Message(text, fromUserId));
         }
 

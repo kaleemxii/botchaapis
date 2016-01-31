@@ -8,13 +8,12 @@ public class Geofence {
     public List<GeoCoordinates> coordinates;
     private transient double[] constant, multiple;
 
-    public Geofence(GeoCoordinates leftBottom, GeoCoordinates rightBottom, GeoCoordinates leftTop, GeoCoordinates rightTop) {
-        coordinates = new ArrayList<>();
+    public Geofence(GeoCoordinates... coordinates) {
+        this.coordinates = new ArrayList<>();
 
-        addCoordinate(rightTop);
-        addCoordinate(leftTop);
-        addCoordinate(leftBottom);
-        addCoordinate(rightBottom);
+        for (GeoCoordinates coordinate : coordinates) {
+            addCoordinate(coordinate);
+        }
         precalc_values();
     }
 

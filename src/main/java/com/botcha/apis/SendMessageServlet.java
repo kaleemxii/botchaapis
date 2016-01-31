@@ -59,7 +59,7 @@ public class SendMessageServlet extends HttpServlet {
         }
 
         // check is the sender is the admin of channel
-        if (channel.admin.userId == userId) {
+        if (channel.admin != null && channel.admin.userId == userId) {
             messageParam = messageParam.trim();
             if (messageParam.startsWith("@")) { // admin replying to @userTag user
                 String userTag = messageParam.substring(1, messageParam.indexOf(' '));
@@ -73,7 +73,7 @@ public class SendMessageServlet extends HttpServlet {
             }
 
         } else { // if the send is not admin
-            if (channel.geofence == null) { // if this is master big bot channel
+            if (channel.geofence == null && channel.admin == null) { // if this is master big bot channel
                 String answer = Utilities.getMessageAnswer(user, messageParam);
                 Utilities.sendMessageToUser(userId, channelIdParam, answer);
 
