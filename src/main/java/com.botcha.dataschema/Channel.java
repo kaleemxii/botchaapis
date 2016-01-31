@@ -25,6 +25,10 @@ public class Channel {
         usersById = new HashMap<>();
     }
 
+    public User getUserById(int userId) {
+        return usersById.get(userId);
+    }
+
     public Collection<User> getUsers() {
         return usersById.values();
     }

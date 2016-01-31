@@ -16,6 +16,10 @@
 
 package com.botcha.apis;
 
+import com.botcha.utilities.DataBase;
+import com.botcha.utilities.Utilities;
+import com.google.common.base.Strings;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +30,20 @@ public class HelloServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        if (!Strings.isNullOrEmpty(req.getParameter("allusers"))) {
+            PrintWriter out = resp.getWriter();
+            resp.setContentType("application/json");
+            out.write(Utilities.Gson.toJson(DataBase.staticUsers.values()));
+            return;
+        }
+        if (!Strings.isNullOrEmpty(req.getParameter("allchannels"))) {
+            PrintWriter out = resp.getWriter();
+            resp.setContentType("application/json");
+            out.write(Utilities.Gson.toJson(DataBase.staticChannels.values()));
+            return;
+        }
+
+
         PrintWriter out = resp.getWriter();
         out.write("Hello, world \n<br><br>\n" +
                 "Available APIs: \n<br><br>\n" +
@@ -47,5 +65,7 @@ public class HelloServlet extends HttpServlet {
 //                e.printStackTrace();
 //            }
 //        }
+
+
     }
 }

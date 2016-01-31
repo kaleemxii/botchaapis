@@ -20,7 +20,7 @@ public class UtilitiesTest {
 
     @org.junit.Test
     public void testSendMessageToUser() throws Exception {
-
+        Utilities.ProcessMessage(113462548, "135483832:AAFMWMgaqIJbe0BAWjZcVxnIDKBAfrpLp9E", "@Gaurav hello");
     }
 
     @org.junit.Test

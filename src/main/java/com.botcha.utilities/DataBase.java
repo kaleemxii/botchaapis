@@ -65,10 +65,10 @@ public class DataBase {
         staticUsers = new HashMap<>();
         staticChannels = new HashMap<>();
 
-        User microsoftAdmin = new User(113462548, "microsoftAdmin"); // kaleem
-        User building3Admin = new User(2, "building3Admin");
-        User mprAdmin = new User(3, "mprAdmin");
-        User hydTrafficAdmin = new User(4, "hydTrafficAdmin");
+        User microsoftAdmin = new User(113462548, "kaleem"); // kaleem
+        User building3Admin = new User(186345694, "gaurav"); // gaurav
+        User mprAdmin = new User(184748820, "shashank");  // shashank
+        User hydTrafficAdmin = new User(191313868, "leela");  // leela
 
         microsoftAdmin.setCoordinates(new GeoCoordinates(17.42968, 78.34089));
 

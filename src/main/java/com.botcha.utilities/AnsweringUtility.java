@@ -40,7 +40,7 @@ public class AnsweringUtility {
         int maxScore = -1;
         Pattern questionNounsPattern = Pattern.compile(StringUtils.join(questionNouns, '|'));
         for (Message message : messages) {
-            System.out.println(message.text);
+            //System.out.println(message.text);
 
             if (questionNounsPattern.matcher(message.text).find()) {
                 int timeScore = getMatchesCount(timeAnswers.matcher(message.text));

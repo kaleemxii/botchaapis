@@ -102,9 +102,9 @@ public class Utilities {
 
     public static String getTopSummaryForChannel(Channel channel, int maxCount) throws IOException {
         StringBuilder sb = new StringBuilder();
-        for (Message message : getChannelUpdates(channel, false)) {
-            sb.append(message).append('\n');
-            if (--maxCount == 0) break;
+        for (Message message : getChannelUpdates(channel, false, maxCount)) {
+            sb.append(message.text).append('\n');
+
         }
         return sb.length() == 0 ? "No messages yet on this channel.." : sb.toString();
     }
@@ -114,7 +114,7 @@ public class Utilities {
         List<Channel> channels = getChannels(coordinates.latitude, coordinates.longitude);
         List<Message> messages = new ArrayList<>();
         for (Channel channel : channels) {
-            messages.addAll(getChannelUpdates(channel, true));
+            messages.addAll(getChannelUpdates(channel, true, 50));
         }
         Message answer = AnsweringUtility.getQuestionAnswerFromMessages(question, messages);
 
@@ -136,7 +136,7 @@ public class Utilities {
     public static String getMessageAnswerFromChannel(Channel channel,
                                                      String question) throws IOException {
         Message answer = AnsweringUtility.getQuestionAnswerFromMessages(question,
-                getChannelUpdates(channel, true));
+                getChannelUpdates(channel, true, 50));
 
 
         return answer == null ? "Sorry couldn't find an answer for you.. try asking admin of channel directly by '@admin [your question]'" :
@@ -144,7 +144,7 @@ public class Utilities {
     }
 
     public static List<Message> getChannelUpdates(Channel channel,
-                                                  boolean getBotOnlyPosts) throws IOException {
+                                                  boolean getBotOnlyPosts, int maxCount) throws IOException {
 
         List<Message> messages = new ArrayList<>();
 
@@ -168,17 +168,19 @@ public class Utilities {
                 text = text.substring("/broadcast".length());
             } else if (getBotOnlyPosts && text.startsWith("/post")) {
                 text = text.substring("/post".length());
-            } else if (fromUserId != channel.admin.userId) {
+            } else if (fromUserId != channel.admin.userId || text.isEmpty()) {
                 continue;
             }
-            messages.add(new Message(text, fromUserId));
+
+            messages.add(new Message(text.trim(), fromUserId));
+            if (--maxCount == 0) break;
         }
 
         return Lists.reverse(messages);
     }
 
     public static void ProcessMessage(int userId, String channelIdParam, String messageParam) throws IOException {
-
+        messageParam = messageParam.toLowerCase();
         User user = DataBase.getUserByUserId(userId);
 
         if (user == null) {

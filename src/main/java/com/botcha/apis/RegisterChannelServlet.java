@@ -56,8 +56,13 @@ public class RegisterChannelServlet extends HttpServlet {
             return;
         }
 
-        channel.addUser(user);
         resp.getWriter().write("{'ok':true}");
+
+        if (channel.getUserById(userId) != null) {
+            return;
+        }
+
+        channel.addUser(user);
         Utilities.sendMessageToUser(userId, channelIdParam, Utilities.getTopSummaryForChannel(channel, 5));
     }
 }
