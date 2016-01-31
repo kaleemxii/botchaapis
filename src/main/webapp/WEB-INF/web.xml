@@ -31,6 +31,15 @@
 
 
     <servlet>
+        <servlet-name>webhook</servlet-name>
+        <servlet-class>com.botcha.apis.WebhookServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>webhook</servlet-name>
+        <url-pattern>/webhook</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>createchannel</servlet-name>
         <servlet-class>com.botcha.apis.CreateChannelServlet</servlet-class>
     </servlet>

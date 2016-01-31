@@ -14,6 +14,7 @@ import org.apache.http.impl.client.HttpClients;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -69,21 +70,20 @@ public class Utilities {
 
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
         int responseCode = con.getResponseCode();
+        return getInputStream(con.getInputStream()).toString();
+    }
 
+    public static String getInputStream(InputStream stream) throws IOException {
         BufferedReader in = new BufferedReader(
-                new InputStreamReader(con.getInputStream()));
+                new InputStreamReader(stream));
         String inputLine;
         StringBuffer response = new StringBuffer();
-
         while ((inputLine = in.readLine()) != null) {
             response.append(inputLine);
         }
         in.close();
 
-        //print result
-        //System.out.println(response.toString());
         return response.toString();
     }
 
@@ -192,6 +192,52 @@ public class Utilities {
         }
 
         return messages;
+    }
+
+    public static void ProcessMessage(int userId, String channelIdParam, String messageParam) throws IOException {
+
+        User user = DataBase.getUserByUserId(userId);
+
+        if (user == null) {
+            throw new IOException("BAD REQUEST userId not registered");
+        }
+
+        Channel channel = DataBase.getChannelByChannelId(channelIdParam);
+
+        if (channel == null) {
+            throw new IOException("BAD REQUEST channelId not registered");
+        }
+
+        // check is the sender is the admin of channel
+        if (channel.admin != null && channel.admin.userId == userId) {
+            messageParam = messageParam.trim();
+            if (messageParam.startsWith("@")) { // admin replying to @userTag user
+                String userTag = messageParam.substring(1, messageParam.indexOf(' '));
+                String message = messageParam.substring(userTag.length() + 2);
+                User toUser = DataBase.getUserByUserTag(userTag, channel.getUsers());
+                if (toUser != null) {
+                    Utilities.sendMessageToUser(toUser.userId, channelIdParam, message);
+                }
+            } else { // broadcast to all users
+                Utilities.sendMessageToAllUserInChannel(channel, messageParam);
+            }
+
+        } else { // if the send is not admin
+            if (channel.geofence == null && channel.admin == null) { // if this is master big bot channel
+                String answer = Utilities.getMessageAnswer(user, messageParam);
+                Utilities.sendMessageToUser(userId, channelIdParam, answer);
+
+            } else { // user is asking in normal channel
+
+                if (messageParam.startsWith("@admin")) { // user asking to @admin of channel
+                    String message = messageParam.substring("@admin".length());
+                    Utilities.sendMessageToUser(channel.admin.userId, channelIdParam, message);
+                } else { // user asking to channel bot, so bot replies
+                    String answer = Utilities.getMessageAnswerFromChannel(channel, messageParam);
+                    Utilities.sendMessageToUser(userId, channelIdParam, answer);
+                }
+            }
+        }
     }
 
 }

@@ -17,31 +17,23 @@
 package com.botcha.apis;
 
 import com.botcha.utilities.Utilities;
-import com.google.common.base.Strings;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class SendMessageServlet extends HttpServlet {
+public class WebhookServlet extends HttpServlet {
 
     @Override
-    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        resp.setContentType("application/json");
-
-        String userIdParam = req.getParameter("userId");
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String input = Utilities.getInputStream(req.getInputStream());
+        JsonObject messageObj = new JsonParser().parse(input).getAsJsonObject().getAsJsonObject("message");
+        int userId = messageObj.getAsJsonObject("from").getAsJsonPrimitive("id").getAsInt();
+        String message = messageObj.getAsJsonPrimitive("text").getAsString().toLowerCase();
         String channelIdParam = req.getParameter("channelId");
-        String messageParam = req.getParameter("message");
-
-        if (Strings.isNullOrEmpty(userIdParam)
-                || Strings.isNullOrEmpty(channelIdParam)
-                || Strings.isNullOrEmpty(messageParam)) {
-            resp.sendError(400, "BAD REQUEST userId/channelId/message is missing");
-            return;
-        }
-
-        int userId = Integer.parseInt(userIdParam);
-        Utilities.ProcessMessage(userId, channelIdParam, messageParam);
+        Utilities.ProcessMessage(userId, channelIdParam, message);
     }
 }
