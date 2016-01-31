@@ -42,7 +42,13 @@ public class HelloServlet extends HttpServlet {
             out.write(Utilities.Gson.toJson(DataBase.staticChannels.values()));
             return;
         }
+        if (!Strings.isNullOrEmpty(req.getParameter("channelId"))) {
 
+            PrintWriter out = resp.getWriter();
+            resp.setContentType("application/json");
+            out.write(Utilities.Gson.toJson(DataBase.getChannelByChannelId(req.getParameter("channelId")).getUsers()));
+            return;
+        }
 
         PrintWriter out = resp.getWriter();
         out.write("Hello, world \n<br><br>\n" +

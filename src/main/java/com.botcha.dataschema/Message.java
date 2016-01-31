@@ -7,10 +7,12 @@ public class Message {
 
     public String text;
     public int fromUserId;
+    public String channelId;
 
-    public Message(String message, int fromUserId) {
+    public Message(String message, int fromUserId, String channelId) {
         this.text = message;
         this.fromUserId = fromUserId;
+        this.channelId = channelId;
     }
 }
 

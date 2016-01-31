@@ -39,7 +39,7 @@ public class Utilities {
 
 
     public static String sendGet(String url) throws IOException {
-
+        System.out.println(url);
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         int responseCode = con.getResponseCode();
@@ -111,31 +111,21 @@ public class Utilities {
         for (Channel channel : channels) {
             messages.addAll(getChannelUpdates(channel, true, 50));
         }
-        Message answer = AnsweringUtility.getQuestionAnswerFromMessages(question, messages);
+        String answer = AnsweringUtility.getQuestionAnswerFromMessages(question, messages, true, 3);
 
-        if (answer != null) {
-            String channelTag = "bot";
-
-            for (Channel channel : DataBase.getGeoFenceChannels()) {
-                if (channel.admin.userId == answer.fromUserId) {
-                    channelTag = channel.channelTag;
-                }
-            }
-            return "Found a relevant answer in channel #" + channelTag + " : " + answer.text;
-        }
-
-        return "Sorry couldn't find an answer for you..";
+        return answer != null ? "Found some relevant information for you ..." + answer :
+                "Sorry, couldn't find an answer for you..";
     }
 
 
     public static String getMessageAnswerFromChannel(Channel channel,
                                                      String question) throws IOException {
-        Message answer = AnsweringUtility.getQuestionAnswerFromMessages(question,
-                getChannelUpdates(channel, true, 50));
+        String answer = AnsweringUtility.getQuestionAnswerFromMessages(question,
+                getChannelUpdates(channel, true, 50), false, 3);
 
 
         return answer == null ? "Sorry couldn't find an answer for you.. try asking admin of channel directly by '@admin [your question]'" :
-                "Found relevant answer in channel history : " + answer.text;
+                "Found some relevant information for you ... : " + answer;
     }
 
     public static List<Message> getChannelUpdates(Channel channel,
@@ -167,7 +157,7 @@ public class Utilities {
                 continue;
             }
 
-            messages.add(new Message(text.trim(), fromUserId));
+            messages.add(new Message(text.trim(), fromUserId, channel.channelID));
             if (--maxCount == 0) break;
         }
 
@@ -177,7 +167,7 @@ public class Utilities {
     public static void ProcessMessage(int userId, String channelIdParam, String messageParam) throws IOException {
         messageParam = messageParam.toLowerCase();
         User user = DataBase.getUserByUserId(userId);
-
+        //System.out.println(messageParam);
         if (user == null) {
             throw new IOException("BAD REQUEST userId not registered");
         }
@@ -188,15 +178,41 @@ public class Utilities {
             throw new IOException("BAD REQUEST channelId not registered");
         }
 
+        // reponses
+        if ((channel.geofence == null || channel.channelTag.equals("stci_botchabot")) &&
+                messageParam.startsWith("/register")) {
+            Utilities.sendMessageToUser(user.userId, channel,
+                    "Team botcha! you have been registerd\n" +
+                            "for STCi Hackathon. Your presentation\n" +
+                            "slot is 11:00 AM - 11:15 AM\n" +
+                            "Tell cortana to remind me");
+            return;
+        }
+
+        if ((channel.geofence == null || channel.channelTag.equals("microsoft_botchabot")) &&
+                messageParam.startsWith("/events")) {
+            Utilities.sendMessageToUser(user.userId, channel,
+                    "Machine learning workshop at MPR3\n" +
+                            "I’ll Join\n\n" +
+                            "Band Parikramaa performing in\n" +
+                            "Amphitheatre in Building 2\n" +
+                            "I’ll Join");
+            return;
+        }
+
+        //System.out.println("xy1");
         // check is the sender is the admin of channel
         if (channel.admin != null && channel.admin.userId == userId) {
+            //System.out.println("xy2");
             messageParam = messageParam.trim();
             if (messageParam.startsWith("@")) { // admin replying to @userTag user
+                //System.out.println("xy3");
                 String userTag = messageParam.substring(1, messageParam.indexOf(' '));
                 String message = messageParam.substring(userTag.length() + 2);
                 User toUser = DataBase.getUserByUserTag(userTag, channel.getUsers());
                 if (toUser != null) {
-                    Utilities.sendMessageToUser(toUser.userId, channel, "@admin:" + message);
+                    //System.out.println("xy4");
+                    Utilities.sendMessageToUser(toUser.userId, channel, "@admin " + message);
                 }
             } else if (!messageParam.startsWith("/post")) { // admin is not posting to bot
                 Utilities.sendMessageToAllUserInChannel(channel, messageParam);
@@ -215,6 +231,9 @@ public class Utilities {
                 } else if (messageParam.startsWith("/broadcast")) { // user asking to @admin of channel
                     String message = messageParam.substring("/broadcast".length());
                     Utilities.sendMessageToAllUserInChannel(channel, message);
+                } else if (messageParam.startsWith("/post")) { // user asking to @admin of channel
+                    String message = messageParam.substring("/post".length());
+                    Utilities.sendMessageToUser(userId, channel, "Sure, I'll make a note of it");
                 } else { // user asking to channel bot, so bot replies
                     String answer = Utilities.getMessageAnswerFromChannel(channel, messageParam);
                     Utilities.sendMessageToUser(userId, channel, answer);
