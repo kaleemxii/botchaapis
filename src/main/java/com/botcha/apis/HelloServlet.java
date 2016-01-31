@@ -16,6 +16,10 @@
 
 package com.botcha.apis;
 
+import com.botcha.dataschema.Channel;
+import com.botcha.utilities.DataBase;
+import com.botcha.utilities.Utilities;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,5 +38,18 @@ public class HelloServlet extends HttpServlet {
                 "/registerchannel?channelId=xxxx&userId=xxxx \n<br><br>\n" +
                 "/sendmessage?channelId=xxxx&userId=xxxx&message=dasdsada \n<br><br>\n" +
                 "/broadcastmessage?channelId=xxxx&message=dasdsada \n<br><br>\n ");
+
+        for (Channel channel : DataBase.staticChannels.values()) {
+            try {
+                String s = "https://api.telegram.org/bot" + channel.channelID +
+                        "/setwebhook?url=";
+                if (channel.admin == null) {
+                    s = s + "https://botchaapis.appspot.com/webhook?channelId=" + channel.channelID;
+                }
+                Utilities.sendGet(s);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

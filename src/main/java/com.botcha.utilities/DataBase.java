@@ -116,15 +116,11 @@ public class DataBase {
 
         Channel botchaChannel = new Channel(null, null, "192493113:AAEd8UGh8sum7P02Np39m2cGhuFRyT7xkj4", "botcha");
 
-
-
         addChannel(microsoftChannel);
         addChannel(building3Channel);
         addChannel(mprChannel);
         addChannel(hydTrafficChannel);
         addChannel(botchaChannel);
-
-
     }
 
 }

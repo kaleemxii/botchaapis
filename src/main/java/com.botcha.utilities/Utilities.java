@@ -5,19 +5,12 @@ import com.botcha.dataschema.GeoCoordinates;
 import com.botcha.dataschema.Message;
 import com.botcha.dataschema.User;
 import com.google.gson.*;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -43,28 +36,6 @@ public class Utilities {
         }
     }
 
-    public static String sendGet2(String url) throws IOException {
-
-        HttpGet httpGet = new HttpGet(url);
-
-        CloseableHttpClient httpClient = HttpClients.createDefault();
-        CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
-
-        int responseCode = httpResponse.getStatusLine().getStatusCode();
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
-
-        StringBuffer response = new StringBuffer();
-
-        String inputLine;
-        while ((inputLine = reader.readLine()) != null) {
-            response.append(inputLine);
-        }
-        reader.close();
-        httpClient.close();
-
-        return response.toString();
-    }
 
     public static String sendGet(String url) throws IOException {
 
@@ -87,15 +58,6 @@ public class Utilities {
         return response.toString();
     }
 
-    public static String sendGet(String scheme, String url, String path, List<NameValuePair> params) throws Exception {
-        URIBuilder builder = new URIBuilder();
-        builder.setScheme(scheme).setHost(url).setPath(path);
-        for (NameValuePair param : params) {
-            builder.addParameter(param.getName(), param.getValue());
-        }
-        URI uri = builder.build();
-        return sendGet(uri.toString());
-    }
 
     public static void sendMessageToAllUser(List<Integer> userIds, String channelId, String message) throws IOException {
         for (int userId : userIds) {
