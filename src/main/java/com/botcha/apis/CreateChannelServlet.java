@@ -70,7 +70,7 @@ public class CreateChannelServlet extends HttpServlet {
             admin = new User(adminId, adminTagParam);
             DataBase.addUser(admin);
         }
-
+        resp.getWriter().write("{'ok':true}");
         Channel channel = new Channel(geofence, admin, channelIdParam, channelTagParam);
 
         // add the user to our users list

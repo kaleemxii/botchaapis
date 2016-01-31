@@ -4,6 +4,7 @@ import com.botcha.dataschema.Channel;
 import com.botcha.dataschema.GeoCoordinates;
 import com.botcha.dataschema.Message;
 import com.botcha.dataschema.User;
+import com.google.common.collect.Lists;
 import com.google.gson.*;
 
 import java.io.BufferedReader;
@@ -89,7 +90,7 @@ public class Utilities {
     }
 
 
-    public static List<Channel> getChannels(double latitude, double longitude) {
+    public static List<Channel> getChannels(double latitude, double longitude) throws IOException {
         List<Channel> channels = new ArrayList<Channel>();
         for (Channel channel : DataBase.getGeoFenceChannels()) {
             if (channel.geofence.Contains(latitude, longitude)) {
@@ -99,13 +100,21 @@ public class Utilities {
         return channels;
     }
 
+    public static String getTopSummaryForChannel(Channel channel, int maxCount) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        for (Message message : getChannelUpdates(channel, false)) {
+            sb.append(message).append('\n');
+            if (--maxCount == 0) break;
+        }
+        return sb.length() == 0 ? "No messages yet on this channel.." : sb.toString();
+    }
 
     public static String getMessageAnswer(User user, String question) throws IOException {
         GeoCoordinates coordinates = user.getCoordinates();
         List<Channel> channels = getChannels(coordinates.latitude, coordinates.longitude);
         List<Message> messages = new ArrayList<>();
         for (Channel channel : channels) {
-            messages.addAll(getChannelUpdates(channel.channelID));
+            messages.addAll(getChannelUpdates(channel, true));
         }
         Message answer = AnsweringUtility.getQuestionAnswerFromMessages(question, messages);
 
@@ -124,20 +133,23 @@ public class Utilities {
     }
 
 
-    public static String getMessageAnswerFromChannel(Channel channel, String question) throws IOException {
-        Message answer = AnsweringUtility.getQuestionAnswerFromMessages(question, getChannelUpdates(channel.channelID));
+    public static String getMessageAnswerFromChannel(Channel channel,
+                                                     String question) throws IOException {
+        Message answer = AnsweringUtility.getQuestionAnswerFromMessages(question,
+                getChannelUpdates(channel, true));
 
 
-        return answer != null ? "Sorry couldn't find an answer for you.. try asking admin of channel directly by '@admin [your question]'" :
+        return answer == null ? "Sorry couldn't find an answer for you.. try asking admin of channel directly by '@admin [your question]'" :
                 "Found relevant answer in channel history : " + answer.text;
     }
 
-    public static List<Message> getChannelUpdates(String channelId) throws IOException {
+    public static List<Message> getChannelUpdates(Channel channel,
+                                                  boolean getBotOnlyPosts) throws IOException {
 
         List<Message> messages = new ArrayList<>();
 
         //https://api.telegram.org/bot125820728:AAGMxfd0FMD48rVZIhz4CuGCwShtr-afZ4U/getupdates
-        String updates = sendGet("https://api.telegram.org/bot" + channelId + "/getupdates");
+        String updates = sendGet("https://api.telegram.org/bot" + channel.channelID + "/getupdates");
         JsonElement jelement = new JsonParser().parse(updates);
         JsonObject jobject = jelement.getAsJsonObject();
         JsonPrimitive ok = jobject.getAsJsonPrimitive("ok");
@@ -150,10 +162,19 @@ public class Utilities {
             JsonObject message = result.getAsJsonObject().getAsJsonObject("message");
             int fromUserId = message.getAsJsonObject("from").getAsJsonPrimitive("id").getAsInt();
             String text = message.getAsJsonPrimitive("text").getAsString().toLowerCase();
+
+            // filter messages for intelli sense
+            if (text.startsWith("/broadcast")) {
+                text = text.substring("/broadcast".length());
+            } else if (getBotOnlyPosts && text.startsWith("/post")) {
+                text = text.substring("/post".length());
+            } else if (fromUserId != channel.admin.userId) {
+                continue;
+            }
             messages.add(new Message(text, fromUserId));
         }
 
-        return messages;
+        return Lists.reverse(messages);
     }
 
     public static void ProcessMessage(int userId, String channelIdParam, String messageParam) throws IOException {
@@ -178,9 +199,9 @@ public class Utilities {
                 String message = messageParam.substring(userTag.length() + 2);
                 User toUser = DataBase.getUserByUserTag(userTag, channel.getUsers());
                 if (toUser != null) {
-                    Utilities.sendMessageToUser(toUser.userId, channelIdParam, message);
+                    Utilities.sendMessageToUser(toUser.userId, channelIdParam, "@admin:" + message);
                 }
-            } else { // broadcast to all users
+            } else if (!messageParam.startsWith("/post")) { // admin is not posting to bot
                 Utilities.sendMessageToAllUserInChannel(channel, messageParam);
             }
 
@@ -193,7 +214,10 @@ public class Utilities {
 
                 if (messageParam.startsWith("@admin")) { // user asking to @admin of channel
                     String message = messageParam.substring("@admin".length());
-                    Utilities.sendMessageToUser(channel.admin.userId, channelIdParam, message);
+                    Utilities.sendMessageToUser(channel.admin.userId, channelIdParam, "@" + user.userTag + ": " + message);
+                } else if (messageParam.startsWith("/broadcast")) { // user asking to @admin of channel
+                    String message = messageParam.substring("/broadcast".length());
+                    Utilities.sendMessageToAllUserInChannel(channel, message);
                 } else { // user asking to channel bot, so bot replies
                     String answer = Utilities.getMessageAnswerFromChannel(channel, messageParam);
                     Utilities.sendMessageToUser(userId, channelIdParam, answer);

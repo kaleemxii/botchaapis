@@ -48,7 +48,7 @@ public class BroadcastMessageServlet extends HttpServlet {
             resp.sendError(400, "BAD REQUEST channelId not registered");
             return;
         }
-
+        resp.getWriter().write("{'ok':true}");
         Utilities.sendMessageToAllUserInChannel(DataBase.getChannelByChannelId(channelIdParam), messageParam);
     }
 }

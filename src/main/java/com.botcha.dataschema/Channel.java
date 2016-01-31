@@ -1,5 +1,8 @@
 package com.botcha.dataschema;
 
+import com.botcha.utilities.Utilities;
+
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -11,7 +14,7 @@ public class Channel {
     public User admin;
     public String channelID;
     public String channelTag;
-
+    public String summary;
     private transient HashMap<Integer, User> usersById;
 
     public Channel(Geofence geofence, User admin, String channelID, String channelTag) {
@@ -32,5 +35,15 @@ public class Channel {
 
     public void removeUser(String userId) {
         usersById.remove(userId);
+    }
+
+    public Channel getChannelWithSummary() throws IOException {
+        Channel clone = this.getClone();
+        clone.summary = Utilities.getTopSummaryForChannel(this, 3);
+        return clone;
+    }
+
+    public Channel getClone() {
+        return new Channel(this.geofence, admin, channelID, channelTag);
     }
 }

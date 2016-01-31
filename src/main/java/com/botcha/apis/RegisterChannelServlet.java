@@ -19,6 +19,7 @@ package com.botcha.apis;
 import com.botcha.dataschema.Channel;
 import com.botcha.dataschema.User;
 import com.botcha.utilities.DataBase;
+import com.botcha.utilities.Utilities;
 import com.google.common.base.Strings;
 
 import javax.servlet.http.HttpServlet;
@@ -56,5 +57,7 @@ public class RegisterChannelServlet extends HttpServlet {
         }
 
         channel.addUser(user);
+        resp.getWriter().write("{'ok':true}");
+        Utilities.sendMessageToUser(userId, channelIdParam, Utilities.getTopSummaryForChannel(channel, 5));
     }
 }

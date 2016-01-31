@@ -1,7 +1,6 @@
 package com.botcha.utilities;
 
 import com.botcha.dataschema.Message;
-import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.HashSet;
@@ -40,7 +39,7 @@ public class AnsweringUtility {
         Message maxMatchMessage = null;
         int maxScore = -1;
         Pattern questionNounsPattern = Pattern.compile(StringUtils.join(questionNouns, '|'));
-        for (Message message : Lists.reverse(messages)) {
+        for (Message message : messages) {
             System.out.println(message.text);
 
             if (questionNounsPattern.matcher(message.text).find()) {

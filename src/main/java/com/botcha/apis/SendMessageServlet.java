@@ -43,5 +43,6 @@ public class SendMessageServlet extends HttpServlet {
 
         int userId = Integer.parseInt(userIdParam);
         Utilities.ProcessMessage(userId, channelIdParam, messageParam);
+        resp.getWriter().write("{'ok':true}");
     }
 }

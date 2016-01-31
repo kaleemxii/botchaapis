@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GetChannelsServlet extends HttpServlet {
@@ -72,8 +73,13 @@ public class GetChannelsServlet extends HttpServlet {
         double latitude = Double.parseDouble(latParam);
         double longitude = Double.parseDouble(longParam);
         List<Channel> channels = Utilities.getChannels(latitude, longitude);
+        List<Channel> outchannels = new ArrayList<>();
+        for (Channel channel : channels) {
+            outchannels.add(channel.getChannelWithSummary());
+        }
+
         PrintWriter out = resp.getWriter();
-        out.write(Utilities.Gson.toJson(channels));
+        out.write(Utilities.Gson.toJson(outchannels));
 
         // update user co-ordinates
         user.getCoordinates().update(latitude, longitude);
