@@ -153,7 +153,9 @@ public class Utilities {
                 text = text.substring("/broadcast".length());
             } else if (getBotOnlyPosts && text.startsWith("/post")) {
                 text = text.substring("/post".length());
-            } else if (fromUserId != channel.admin.userId || text.isEmpty()) {
+            } else if (fromUserId != channel.admin.userId
+                    || text.isEmpty() || text.startsWith("/events")
+                    || text.startsWith("/register")) {
                 continue;
             }
 
@@ -179,7 +181,7 @@ public class Utilities {
         }
 
         // reponses
-        if ((channel.geofence == null || channel.channelTag.equals("stci_botchabot")) &&
+        if ((channel.geofence == null || channel.channelTag.equals("stci_botcha")) &&
                 messageParam.startsWith("/register")) {
             Utilities.sendMessageToUser(user.userId, channel,
                     "Team botcha! you have been registerd\n" +
@@ -189,7 +191,7 @@ public class Utilities {
             return;
         }
 
-        if ((channel.geofence == null || channel.channelTag.equals("microsoft_botchabot")) &&
+        if ((channel.geofence == null || channel.channelTag.equals("microsoft_botcha")) &&
                 messageParam.startsWith("/events")) {
             Utilities.sendMessageToUser(user.userId, channel,
                     "Machine learning workshop at MPR3\n" +
@@ -200,21 +202,22 @@ public class Utilities {
             return;
         }
 
-        //System.out.println("xy1");
+        System.out.println("xy1");
         // check is the sender is the admin of channel
         if (channel.admin != null && channel.admin.userId == userId) {
-            //System.out.println("xy2");
+            System.out.println("xy2");
             messageParam = messageParam.trim();
             if (messageParam.startsWith("@")) { // admin replying to @userTag user
-                //System.out.println("xy3");
+                System.out.println("xy3");
                 String userTag = messageParam.substring(1, messageParam.indexOf(' '));
                 String message = messageParam.substring(userTag.length() + 2);
                 User toUser = DataBase.getUserByUserTag(userTag, channel.getUsers());
                 if (toUser != null) {
-                    //System.out.println("xy4");
+                    System.out.println("xy4");
                     Utilities.sendMessageToUser(toUser.userId, channel, "@admin " + message);
                 }
             } else if (!messageParam.startsWith("/post")) { // admin is not posting to bot
+                System.out.println("xy5");
                 Utilities.sendMessageToAllUserInChannel(channel, messageParam);
             }
 
@@ -232,7 +235,6 @@ public class Utilities {
                     String message = messageParam.substring("/broadcast".length());
                     Utilities.sendMessageToAllUserInChannel(channel, message);
                 } else if (messageParam.startsWith("/post")) { // user asking to @admin of channel
-                    String message = messageParam.substring("/post".length());
                     Utilities.sendMessageToUser(userId, channel, "Sure, I'll make a note of it");
                 } else { // user asking to channel bot, so bot replies
                     String answer = Utilities.getMessageAnswerFromChannel(channel, messageParam);

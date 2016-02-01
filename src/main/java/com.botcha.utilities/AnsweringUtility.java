@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  * Created by xy on 31/1/16.
  */
 public class AnsweringUtility {
-    private static Pattern nouns = Pattern.compile("hackathon|lunch|traffic|alert[s]?|event[s]?|presentation[s]?|bed[s]?");
+    private static Pattern nouns = Pattern.compile("hackathon|lunch|traffic|alert[s]?|event[s]?|presentation[s]?|bed[s]?|tennis|offer|discount|promotion|cab|share|ride|airport");
     private static Pattern timeQuestions = Pattern.compile("when(?: is)?|(?:what )?time(?: is)?");
     private static Pattern timeAnswers = Pattern.compile("at|\\d[a|p]m|");
     private static Pattern placeQuestions = Pattern.compile("where(?: is)?");
@@ -66,7 +66,7 @@ public class AnsweringUtility {
                 sb.append('#').append(DataBase.getChannelByChannelId(message.channelId).channelTag).append(' ');
             }
             sb.append('@').
-                    append(DataBase.getUserByUserId(message.fromUserId).userTag)
+                    append(DataBase.getUserByUserId(message.fromUserId).userTag).append(' ')
                     .append(message.text)
                     .append('\n');
             if (--top == 0) break;
