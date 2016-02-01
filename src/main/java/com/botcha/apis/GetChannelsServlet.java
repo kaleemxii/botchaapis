@@ -75,7 +75,8 @@ public class GetChannelsServlet extends HttpServlet {
         List<Channel> channels = Utilities.getChannels(latitude, longitude);
         List<Channel> outchannels = new ArrayList<>();
         for (Channel channel : channels) {
-            outchannels.add(channel.getChannelWithSummary());
+//            outchannels.add(channel.getChannelWithSummary());
+            outchannels.add(channel);
         }
 
         PrintWriter out = resp.getWriter();

@@ -109,7 +109,7 @@ public class Utilities {
         List<Channel> channels = getChannels(coordinates.latitude, coordinates.longitude);
         List<Message> messages = new ArrayList<>();
         for (Channel channel : channels) {
-            messages.addAll(getChannelUpdates(channel, true, 50));
+            messages.addAll(getChannelUpdates(channel, true, 10000));
         }
         String answer = AnsweringUtility.getQuestionAnswerFromMessages(question, messages, true, 3);
 
@@ -121,7 +121,7 @@ public class Utilities {
     public static String getMessageAnswerFromChannel(Channel channel,
                                                      String question) throws IOException {
         String answer = AnsweringUtility.getQuestionAnswerFromMessages(question,
-                getChannelUpdates(channel, true, 50), false, 3);
+                getChannelUpdates(channel, true, 100000), false, 3);
 
 
         return answer == null ? "Sorry couldn't find an answer for you.. try asking admin of channel directly by '@admin [your question]'" :
